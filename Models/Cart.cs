@@ -8,6 +8,10 @@ namespace AnticaPizza.Models
 
     public partial class Cart
     {
+        public Cart()
+        {
+            Stato = true;
+        }
         public int ID { get; set; }
 
         public int UserID { get; set; }
@@ -15,6 +19,8 @@ namespace AnticaPizza.Models
         public int MenuID { get; set; }
 
         public int Quantita { get; set; }
+
+        public bool Stato { get; set; }
         public virtual Menu Menu { get; set; }
         public virtual User User { get; set; }
     }
