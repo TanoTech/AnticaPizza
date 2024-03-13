@@ -1,0 +1,40 @@
+@model AnticaPizza.Models.Menu
+
+@{
+    ViewBag.Title = "Elimina menu";
+}
+
+<h2>Elimina menu</h2>
+
+<h3>Sei sicuro di voler eliminare  @Html.DisplayFor(model => model.Nome)?</h3>
+<div>
+    <h4>Dettagli del menu</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Nome)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Nome)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Prezzo)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Prezzo)
+        </dd>
+    </dl>
+
+    @using (Html.BeginForm("Delete", "Menu", new { id = Model.ID }, FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+
+        <p>
+            <input type="submit" value="Elimina" class="btn btn-danger" /> |
+            @Html.ActionLink("Annulla", "Index")
+        </p>
+    }
+</div>

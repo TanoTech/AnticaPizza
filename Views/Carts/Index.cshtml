@@ -1,0 +1,37 @@
+
+@model List<AnticaPizza.Models.Cart>
+
+@{
+    ViewBag.Title = "Carrello";
+}
+
+<h2>Il tuo carrello</h2>
+
+@if (Model.Any())
+{
+    <table class="table">
+        <tr>
+            <th>Prodotto</th>
+            <th>Quantità</th>
+            <th>Azioni</th>
+        </tr>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Menu.Nome</td>
+                <td>@item.Quantita</td>
+                <td>
+                    @Html.ActionLink("Rimuovi", "RemoveFromCart", new { id = item.ID })
+                </td>
+            </tr>
+        }
+    </table>
+
+    <div>
+        @Html.ActionLink("Procedi con l'ordine", "Checkout")
+    </div>
+}
+else
+{
+    <p>Il tuo carrello è vuoto.</p>
+}
