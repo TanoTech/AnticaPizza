@@ -44,7 +44,7 @@ namespace AnticaPizza.Controllers
         public ActionResult Logout()
         {
             Session.Clear();
-            return RedirectToAction("Index", "Login");
+            return RedirectToAction("Index", "Menu");
         }
     }
 }

@@ -1,0 +1,31 @@
+@model List<AnticaPizza.Models.SingleCart>
+
+<table class="table">
+    <tr>
+        <th>Utente</th>
+        <th>Menu</th>
+        <th></th>
+    </tr>
+    @foreach (var userCart in Model)
+    {
+        foreach (var cart in userCart.Carts)
+        {
+            <tr>
+                @if (cart == userCart.Carts.First())
+                {
+                    <td rowspan="@userCart.Carts.Count">@userCart.Username</td>
+                }
+                <td>@cart.Menu.Nome</td>
+                <td>
+                    @if (cart.Stato)
+                    {
+                        using (Html.BeginForm("Evaso", "Admin", new { id = cart.ID }, FormMethod.Post))
+                        {
+                            <button type="submit" class="btn btn-primary">Contrassegna come Evaso</button>
+                        }
+                    }
+                </td>
+            </tr>
+        }
+    }
+</table>
