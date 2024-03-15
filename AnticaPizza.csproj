@@ -146,6 +146,7 @@
     <Compile Include="Controllers\CartsController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Controllers\MenusController.cs" />
+    <Compile Include="Controllers\RoleModel.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -219,6 +220,7 @@
     <Content Include="Views\Admin\Index.cshtml" />
     <Content Include="Views\User\TuoiOrdini.cshtml" />
     <Content Include="Views\User\Storico.cshtml" />
+    <Content Include="Views\Admin\Storico.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

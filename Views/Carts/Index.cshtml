@@ -48,9 +48,11 @@
             </div>
         </div>
 
-        <p>Il tuo indirizzo consegna è <span class="indirizzoConsegna"></span></p>  
+        <p>Il tuo indirizzo consegna è: <span class="indirizzoConsegna"></span></p>
         <p>Vuoi cambiarlo?</p>
-        }
+        @Html.ActionLink("Procedi all'ordine", "Procedi", "Carts", null, new { @class = "btn btn-primary" })
+
+    }
     else
     {
         < p > Il tuo carrello è vuoto.</ p >

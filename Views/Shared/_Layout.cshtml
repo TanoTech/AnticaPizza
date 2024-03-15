@@ -33,7 +33,7 @@
                         if (Session["AdminID"] != null)
                         {
                             <li>@Html.ActionLink("Ordini da evadere", "Index", "Admin", new { area = "" }, new { @class = "nav-link  text-white" })</li>
-                            <li>@Html.ActionLink("Storico ordini", "Index", "Admin", new { area = "" }, new { @class = "nav-link  text-white" })</li>
+                            <li>@Html.ActionLink("Storico ordini", "Storico", "Admin", new { area = "" }, new { @class = "nav-link  text-white" })</li>
                         }
                     }
                     else
