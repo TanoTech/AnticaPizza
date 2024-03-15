@@ -42,15 +42,74 @@ namespace AnticaPizza.Controllers
         {
             int userId = (int)Session["UserID"];
 
-            var userOrders = db.Carts
+            var userOrders = db.Histories
                 .Where(c => c.UserID == userId)
                 .ToList();
 
-            bool allOrdersEvasi = userOrders.All(o => !o.Stato);
+            return View(userOrders);
+        }
 
-            ViewBag.AllOrdersEvasi = allOrdersEvasi;
+        public ActionResult Storico()
+        {
+            int userId = (int)Session["UserID"];
+
+            var userOrders = db.Histories
+                .Where(c => c.UserID == userId && c.Stato == false)
+                .ToList();
 
             return View(userOrders);
+        }
+
+        public ActionResult UpdateAddress()
+        {
+            int userId = (int)Session["UserID"];
+            var user = db.Users.FirstOrDefault(u => u.ID == userId);
+
+            if (user == null)
+            {
+                return HttpNotFound();
+            }
+
+            return RedirectToAction("Index", "Carts");
+        }
+
+        [HttpGet]
+
+        public JsonResult GetAddress()
+        {
+            int userId = (int)Session["UserID"];
+            var user = db.Users.FirstOrDefault(u => u.ID == userId);
+
+            if (user != null)
+            {
+                return Json(new { success = true, indirizzoConsegna = user.IndirizzoConsegna }, JsonRequestBehavior.AllowGet);
+            }
+            else
+            {
+                return Json(new { success = false }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult UpdateAddress(string indirizzoConsegna)
+        {
+            if (ModelState.IsValid)
+            {
+                int userId = (int)Session["UserID"];
+                var existingUser = db.Users.FirstOrDefault(u => u.ID == userId);
+
+                if (existingUser == null)
+                {
+                    return HttpNotFound();
+                }
+
+                existingUser.IndirizzoConsegna = indirizzoConsegna;
+                db.SaveChanges();
+
+                return RedirectToAction("Index");
+            }
+            return RedirectToAction("Index");
         }
 
     }

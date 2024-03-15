@@ -1,37 +1,110 @@
-
 @model List<AnticaPizza.Models.Cart>
 
 @{
     ViewBag.Title = "Carrello";
 }
 
-<h2>Il tuo carrello</h2>
 
-@if (Model.Any())
-{
-    <table class="table">
-        <tr>
-            <th>Prodotto</th>
-            <th>Quantità</th>
-            <th>Azioni</th>
-        </tr>
-        @foreach (var item in Model)
-        {
+<div class="container">
+    <h2>Il tuo carrello</h2>
+
+    @if (Model.Any())
+    {
+        <table class="table">
             <tr>
-                <td>@item.Menu.Nome</td>
-                <td>@item.Quantita</td>
-                <td>
-                    @Html.ActionLink("Rimuovi", "RemoveFromCart", new { id = item.ID })
-                </td>
+                <th>Prodotto</th>
+                <th>Note</th>
+                <th></th>
             </tr>
-        }
-    </table>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Menu.Nome</td>
+                    <td id="note_@item.ID">@item.Note <button class="btnAddNote" data-cartitemid="@item.ID">+</button></td>
+                    <td>
+                        @Html.ActionLink("Elimina", "RemoveFromCart", new { id = item.ID })
+                    </td>
+                </tr>
+            }
+        </table>
 
-    <div>
-        @Html.ActionLink("Procedi con l'ordine", "Procedi")
+        <div class="modal fade" id="addNoteModal" tabindex="-1" role="dialog" aria-labelledby="addNoteModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addNoteModalLabel">Aggiungi Note</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="text" id="noteInput" class="form-control" placeholder="Inserisci le note">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Annulla</button>
+                        <button type="button" class="btn btn-primary" id="btnSaveNote">Salva</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <p>Il tuo indirizzo consegna è <span class="indirizzoConsegna"></span></p>  
+        <p>Vuoi cambiarlo?</p>
+        }
+    else
+    {
+        < p > Il tuo carrello è vuoto.</ p >
+    }
+    @section Scripts {
+        <script>
+        $(document).ready(function () {
+
+            $(".btnAddNote").click(function () {
+                var cartItemId = $(this).data("cartitemid");
+                $("#noteInput").val("");
+                $("#addNoteModal").modal("show");
+                $("#btnSaveNote").off("click").on("click", function () {
+                    var note = $("#noteInput").val();
+                    $.ajax({
+                        url: '@Url.Action("AddNoteToCart", "Carts")',
+                        type: 'POST',
+                        data: { cartItemId: cartItemId, note: note },
+                        success: function (response) {
+                            if (response.success) {
+                                location.reload();
+                                $("#addNoteModal").modal("hide");
+                                getCartItemNotes(cartItemId);
+                            } else {
+                                alert("Si è verificato un errore durante l'aggiunta delle note.");
+                            }
+                        },
+                        error: function () {
+                            alert("Si è verificato un errore durante la richiesta AJAX.");
+                        }
+                    });
+                });
+            });
+
+              function getAddress() {
+        $.ajax({
+            url: '@Url.Action("GetAddress", "User")',
+            type: 'GET',
+            success: function (response) {
+                if (response.success) {
+                    $(".indirizzoConsegna").text(response.indirizzoConsegna);
+                } else {
+                    alert("Si è verificato un errore durante il recupero dell'indirizzo di consegna.");
+                }
+            },
+            error: function () {
+                alert("Si è verificato un errore durante la richiesta AJAX.");
+            }
+        });
+    }
+
+    getAddress();
+        });
+
+        </script>
     </div>
-}
-else
-{
-    <p>Il tuo carrello è vuoto.</p>
-}
+    }

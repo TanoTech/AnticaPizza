@@ -28,10 +28,13 @@ namespace AnticaPizza.Controllers
                 if (user.Role == "admin")
                 {
                     Session["AdminID"] = user.ID;
+                    Session["Username"] = user.Username;
+
                 }
                 else
                 {
                     Session["UserID"] = user.ID;
+                    Session["Username"] = user.Username;
                 }
 
                 return RedirectToAction("Index", "Menu");
