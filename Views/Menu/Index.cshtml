@@ -1,60 +1,56 @@
 @model IEnumerable<AnticaPizza.Models.Menu>
 
+
 @{
     ViewBag.Title = "Menu";
 }
 
-<h2>Menu</h2>
+
+<div class="container">
+    <h1>Menu</h1>
 
 
-
-@if (Session["AdminID"] != null)
-{
-<p>
-    @Html.ActionLink("Aggiungi nuovo prodotto", "Add")
-</p>
-}
-
-
-<table class="table">
-    <tr>
-        <th></th>
-        <th>Nome</th>
-        <th>Ingredienti</th>
-        <th>Prezzo</th>
-    </tr>
-
-    @foreach (var item in Model)
+    @if (Session["AdminID"] != null)
     {
-        <tr>
-            <td><img src="~/Uploads/@item.ImgUrl" /></td>
-            <td>@item.Nome</td>
-            <td>@item.Ingredients</td>
-            <td>@item.Prezzo</td>
-            <td>
-
-                @if (Session["UserID"] != null || Session["AdminID"] != null)
-                {
-                    using (Html.BeginForm("AddToCart", "Carts", FormMethod.Post))
-                    {
-                        @Html.AntiForgeryToken()
-                        @Html.Hidden("menuId", item.ID)
-                        <input type="submit" value="Aggiungi al carrello" class="btn btn-primary" />
-                    }
-                }
-                else
-                {
-                    <form action="@Url.Action("Index", "Login")" method="get">
-                        <button type="submit">Accedi per ordinare! </button>
-                    </form>
-                }
-
-                @if (Session["AdminID"] != null)
-                {
-                    @Html.ActionLink("Modifica", "Edit", new { id = item.ID })
-                    @Html.ActionLink("Elimina", "Delete", new { id = item.ID })
-                }
-            </td>
-        </tr>
+        <p>
+            @Html.ActionLink("Aggiungi nuovo prodotto", "Add")
+        </p>
     }
-</table>
+
+
+    <table class="table">
+        <tr>
+            <th></th>
+            <th>Nome</th>
+            <th>Ingredienti</th>
+            <th>Prezzo</th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td><div><img src="~/Uploads/@item.ImgUrl" /></div></td>
+                <td>@item.Nome</td>
+                <td>@item.Ingredients</td>
+                <td>@item.Prezzo.ToString("0.00")€</td>
+                <td>
+                    @if (Session["UserID"] != null || Session["AdminID"] != null)
+                    {
+                        using (Html.BeginForm("AddToCart", "Carts", FormMethod.Post))
+                        {
+                            @Html.AntiForgeryToken()
+                            @Html.Hidden("menuId", item.ID)
+                            <input type="submit" value="Aggiungi al carrello" class="btn btn-primary" />
+                        }
+                    }
+
+                    @if (Session["AdminID"] != null)
+                    {
+                        @Html.ActionLink("Modifica", "Edit", new { id = item.ID })
+                        @Html.ActionLink("Elimina", "Delete", new { id = item.ID })
+                    }
+                </td>
+            </tr>
+        }
+    </table>
+</div>

@@ -14,6 +14,7 @@ namespace AnticaPizza.Models
             Carts = new HashSet<Cart>();
             Histories = new HashSet<History>();
             Role = "customer";
+            IndirizzoConsegna = "Via ...";
         }
 
         public int ID { get; set; }
@@ -33,6 +34,11 @@ namespace AnticaPizza.Models
         [NotMapped] 
         [Compare("Password", ErrorMessage = "La password e la conferma della password non corrispondono.")]
         public string ConfirmPassword { get; set; }
+
+
+        [Required(ErrorMessage = "Indirizzo di consegna è obbligatorio")]
+        [StringLength(255)]
+        public string IndirizzoConsegna { get; set; }
 
         [Required]
         [StringLength(50)]

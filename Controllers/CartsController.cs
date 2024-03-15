@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
-using System.Web;
+using System.Net;
 using System.Web.Mvc;
 using AnticaPizza.Models;
 
@@ -14,14 +13,14 @@ namespace AnticaPizza.Controllers
 
         public ActionResult Index()
         {
-             int userId = (int)Session["UserID"];
+            int userId = (int)Session["UserID"];
 
-             var cartItems = db.Carts
-                    .Where(c => c.UserID == userId)
-                    .Include(c => c.Menu)
-                    .ToList();
+            var cartItems = db.Carts
+                   .Where(c => c.UserID == userId)
+                   .Include(c => c.Menu)
+                   .ToList();
 
-             return View(cartItems);
+            return View(cartItems);
         }
 
         [HttpPost]
@@ -48,9 +47,12 @@ namespace AnticaPizza.Controllers
             int userId = (int)Session["UserID"];
 
             var cartItems = db.Carts.Where(c => c.UserID == userId).ToList();
+            var user = db.Users.FirstOrDefault(u => u.ID == userId);
 
             if (cartItems.Any())
             {
+                string userIndirizzo = user.IndirizzoConsegna;
+
                 decimal totalPrice = cartItems.Sum(c => c.Menu.Prezzo * c.Quantita);
 
                 int orderNumber = GenerateOrderNumber(); 
@@ -63,7 +65,9 @@ namespace AnticaPizza.Controllers
                         MenuID = cartItem.MenuID,
                         Prezzo = cartItem.Menu.Prezzo * cartItem.Quantita,
                         Quantita = cartItem.Quantita,
+                        Note = cartItem.Note,
                         Stato = true,
+                        IndirizzoConsegna = userIndirizzo,
                         NumeroOrdine = orderNumber, 
                         DataOrdine = DateTime.Now
                     };
@@ -74,7 +78,7 @@ namespace AnticaPizza.Controllers
                 db.Carts.RemoveRange(cartItems);
                 db.SaveChanges();
 
-                return RedirectToAction("Index", "History");
+                return RedirectToAction("TuoiOrdini", "User");
             }
 
             return RedirectToAction("Index", "Carts");
@@ -92,6 +96,57 @@ namespace AnticaPizza.Controllers
             return lastOrder.NumeroOrdine + 1;
         }
 
-    }
+        public ActionResult RemoveFromCart(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
 
+            var cartItem = db.Carts.Find(id);
+
+            if (cartItem == null)
+            {
+                return HttpNotFound();
+            }
+
+            db.Carts.Remove(cartItem);
+            db.SaveChanges();
+
+            return RedirectToAction("Index");
+        }
+
+        public JsonResult GetCartItemNotes(int cartItemId)
+        {
+            var cartItem = db.Carts
+                            .Include(c => c.Menu)
+                            .SingleOrDefault(c => c.ID == cartItemId);
+
+            if (cartItem != null)
+            {
+                return Json(new { success = true, notes = cartItem.Note });
+            }
+            else
+            {
+                return Json(new { success = false, errorMessage = "Elemento del carrello non trovato." });
+            }
+        }
+
+        [HttpPost]
+        public ActionResult AddNoteToCart(int cartItemId, string note)
+        {
+            var cartItem = db.Carts.Find(cartItemId);
+
+            if (cartItem == null)
+            {
+                return HttpNotFound();
+            }
+
+            cartItem.Note = note;
+            db.Entry(cartItem).State = EntityState.Modified;
+            db.SaveChanges();
+
+            return Json(new { success = true, notes = cartItem.Note });
+        }
+    }
 }

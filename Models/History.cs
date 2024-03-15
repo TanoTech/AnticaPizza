@@ -18,6 +18,14 @@ namespace AnticaPizza.Models
 
         public int Quantita { get; set; }
 
+
+        [StringLength(255)]
+        public string Note { get; set; }
+
+
+        [StringLength(255)]
+        public string IndirizzoConsegna { get; set; }
+
         public int NumeroOrdine { get; set; }
 
         public bool Stato { get; set; }

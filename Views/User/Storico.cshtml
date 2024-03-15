@@ -3,14 +3,12 @@
 @{
     var groupedOrders = Model.GroupBy(o => o.NumeroOrdine).Reverse();
 }
-
 <div class="container">
     @foreach (var group in groupedOrders)
     {
-        if (group.Any(o => o.Stato))
+        if (group.Any(o => !o.Stato))
         {
             decimal totalOrderPrice = 0;
-
             <div class="card mb-3">
                 <div class="card-header">
                     Ordine numero #@group.Key
@@ -19,14 +17,11 @@
                     <table class="table">
                         @foreach (var order in group)
                         {
-                            if (order.Stato)
-                            {
-                                <tr>
-                                    <td>@order.Menu.Nome</td>
-                                    <td>@order.Menu.Prezzo.ToString("0.00")€</td>
-                                </tr>
-                                totalOrderPrice += order.Menu.Prezzo;
-                            }
+                            <tr>
+                                <td>@order.Menu.Nome</td>
+                                <td>@order.Menu.Prezzo.ToString("0.00")€</td>
+                            </tr>
+                            totalOrderPrice += order.Menu.Prezzo;
                         }
                     </table>
                 </div>
@@ -34,9 +29,8 @@
                     <p>
                         Totale: @totalOrderPrice.ToString("0.00") €
                     </p>
-
                     <p>
-                        Stato: In lavorazione
+                        Stato: Evaso
                     </p>
                 </div>
             </div>

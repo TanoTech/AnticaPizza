@@ -11,6 +11,7 @@ namespace AnticaPizza.Models
         public Cart()
         {
             Stato = true;
+            Note = "aggiungi nota";
         }
         public int ID { get; set; }
 
@@ -19,6 +20,9 @@ namespace AnticaPizza.Models
         public int MenuID { get; set; }
 
         public int Quantita { get; set; }
+
+        [StringLength(255)]
+        public string Note { get; set; }
 
         public bool Stato { get; set; }
         public virtual Menu Menu { get; set; }

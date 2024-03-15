@@ -1,34 +1,37 @@
 @model List<AnticaPizza.Models.History>
 
-<table class="table">
-    <tr>
-        <th>Utente</th>
-        <th>Numero Ordine</th>
-        <th>Ordini</th>
-    </tr>
-    @foreach (var orderGroup in Model.GroupBy(o => o.NumeroOrdine))
-    {
-        var order = orderGroup.First();
+
+<div class="container">
+    <table class="table">
         <tr>
-            <td rowspan="@orderGroup.Count()">@order.User.Username</td>
-            <td rowspan="@orderGroup.Count()">@order.NumeroOrdine</td>
-            <td>
-                @foreach (var item in orderGroup)
-                {
-                    <p>@item.Menu.Nome</p>
-                }
-            </td>
+            <th>Utente</th>
+            <th>Numero Ordine</th>
+            <th>Ordini</th>
         </tr>
-        <tr>
-            <td colspan="3">
-                @if (order.Stato)
-                {
-                    using (Html.BeginForm("SetAllEvasoForUser", "Admin", new { orderNumber = order.NumeroOrdine }, FormMethod.Post))
+        @foreach (var orderGroup in Model.GroupBy(o => o.NumeroOrdine))
+        {
+            var order = orderGroup.First();
+            <tr>
+                <td rowspan="@orderGroup.Count()">@order.User.Username</td>
+                <td rowspan="@orderGroup.Count()">@order.NumeroOrdine</td>
+                <td>
+                    @foreach (var item in orderGroup)
                     {
-                        <button type="submit" class="btn btn-primary">Evaso</button>
+                        <p>@item.Menu.Nome</p>
                     }
-                }
-            </td>
-        </tr>
-    }
-</table>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="3">
+                    @if (order.Stato)
+                    {
+                        using (Html.BeginForm("", "Admin", new { orderNumber = order.NumeroOrdine }, FormMethod.Post))
+                        {
+                            <button type="submit" class="btn btn-primary">Evaso</button>
+                        }
+                    }
+                </td>
+            </tr>
+        }
+    </table>
+</div>
