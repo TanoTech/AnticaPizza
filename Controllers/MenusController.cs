@@ -44,6 +44,7 @@ namespace AnticaPizza.Controllers
             return fileNames.Select(Path.GetFileName).ToList();
         }
 
+        [Authorize(Roles = RoleModel.Admin)]
         public ActionResult Add()
         {
             return View();
@@ -72,6 +73,7 @@ namespace AnticaPizza.Controllers
 
             return View(menu);
         }
+
 
         public ActionResult Edit(int? id)
         {
@@ -125,6 +127,7 @@ namespace AnticaPizza.Controllers
 
             return View(menu);
         }
+
 
         public ActionResult Delete(int? id)
         {

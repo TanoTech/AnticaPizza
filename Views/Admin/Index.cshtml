@@ -1,37 +1,50 @@
 @model List<AnticaPizza.Models.History>
 
-
 <div class="container">
-    <table class="table">
-        <tr>
-            <th>Utente</th>
-            <th>Numero Ordine</th>
-            <th>Ordini</th>
-        </tr>
-        @foreach (var orderGroup in Model.GroupBy(o => o.NumeroOrdine))
-        {
-            var order = orderGroup.First();
-            <tr>
-                <td rowspan="@orderGroup.Count()">@order.User.Username</td>
-                <td rowspan="@orderGroup.Count()">@order.NumeroOrdine</td>
-                <td>
-                    @foreach (var item in orderGroup)
+    @foreach (var group in Model.GroupBy(o => o.NumeroOrdine).Reverse())
+    {
+        decimal totalOrderPrice = 0;
+
+        <div class="card mb-3">
+            <div class="card-header">
+                Ordine numero #@group.Key
+            </div>
+            <div class="card-body">
+                <table class="table">
+                    @foreach (var order in group)
                     {
-                        <p>@item.Menu.Nome</p>
+                        <tr>
+                            <td>@order.Menu.Nome</td>
+                            <td>@order.Menu.Prezzo.ToString("0.00")€</td>
+                        </tr>
+                        totalOrderPrice += order.Menu.Prezzo;
                     }
-                </td>
-            </tr>
-            <tr>
-                <td colspan="3">
-                    @if (order.Stato)
-                    {
-                        using (Html.BeginForm("", "Admin", new { orderNumber = order.NumeroOrdine }, FormMethod.Post))
-                        {
-                            <button type="submit" class="btn btn-primary">Evaso</button>
-                        }
-                    }
-                </td>
-            </tr>
-        }
-    </table>
-</div>
+                </table>
+            </div>
+            <div class="card-footer">
+                <p>
+                    Totale: @totalOrderPrice.ToString("0.00") €
+                </p>
+                <p>
+                    Indirizzo Cliente: @group.FirstOrDefault()?.User?.Indirizzo
+                </p>
+
+                @if (group.Any(o => o.Stato))
+                {
+                    <p>
+                        Stato: In lavorazione
+                    </p>
+                    <form method="post" action="@Url.Action("SetAllEvasoForOrder", "Admin", new { numeroOrdine = group.Key, returnUrl = Request.RawUrl })">
+                        <button type="submit" class="btn btn-danger">Evaso</button>
+                    </form>
+                }
+                else
+                {
+                    <p>
+                        Stato: Evaso
+                    </p>
+                }
+            </div>
+        </div>
+    }
+</div>+

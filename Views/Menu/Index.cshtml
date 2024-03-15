@@ -40,7 +40,10 @@
                         {
                             @Html.AntiForgeryToken()
                             @Html.Hidden("menuId", item.ID)
-                            <input type="submit" value="Aggiungi al carrello" class="btn btn-primary" />
+                            if (Session["UserID"] != null)
+                            { 
+                                <input type="submit" value="Aggiungi al carrello" class="btn btn-primary" />
+                            }
                         }
                     }
 

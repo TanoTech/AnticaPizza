@@ -1,0 +1,48 @@
+@model List<AnticaPizza.Models.History>
+
+<div class="container">
+    <h2>Storico degli Ordini Evasi</h2>
+    @if (Model.Any())
+    {
+        foreach (var group in Model.GroupBy(o => o.NumeroOrdine).Reverse())
+        {
+            decimal totalOrderPrice = 0;
+
+            <div class="card mb-3">
+                <div class="card-header">
+                    Ordine numero #@group.Key
+                </div>
+                <div class="card-body">
+                    <table class="table">
+                        @foreach (var order in group)
+                        {
+                            <tr>
+                                <td>@order.Menu.Nome</td>
+                                <td>@order.Menu.Prezzo.ToString("0.00")€</td>
+                            </tr>
+                            totalOrderPrice += order.Menu.Prezzo;
+                        }
+                    </table>
+                </div>
+                <div class="card-footer">
+                    <p>
+                        Totale: @totalOrderPrice.ToString("0.00") €
+                    </p>
+                    <p>
+                        Indirizzo Cliente: @group.FirstOrDefault().User.Username
+                    </p>
+                    <p>
+                        Indirizzo Cliente: @group.FirstOrDefault().IndirizzoConsegna
+                    </p>
+                    <p>
+                        Stato: Evaso
+                    </p>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <p>Non ci sono ordini evasi.</p>
+    }
+</div>

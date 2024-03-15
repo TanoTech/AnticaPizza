@@ -11,6 +11,7 @@ namespace AnticaPizza.Controllers
     {
         private PizzaDBContext db = new PizzaDBContext();
 
+
         public async Task<ActionResult> Index()
         {
             var ordersInProgress = await db.Histories
@@ -45,18 +46,29 @@ namespace AnticaPizza.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> SetAllEvasoForUser(int userId)
+        public async Task<ActionResult> SetAllEvasoForOrder(int numeroOrdine, string returnUrl)
         {
-            var userOrders = await db.Histories.Where(h => h.UserID == userId && h.Stato).ToListAsync();
-            if (userOrders != null && userOrders.Any())
+            var orders = await db.Histories.Where(h => h.NumeroOrdine == numeroOrdine && h.Stato).ToListAsync();
+            if (orders != null && orders.Any())
             {
-                foreach (var order in userOrders)
+                foreach (var order in orders)
                 {
                     order.Stato = false;
                 }
                 await db.SaveChangesAsync();
             }
-            return RedirectToAction("Index");
+            return Redirect(returnUrl);
+        }
+
+        public async Task<ActionResult> Storico()
+        {
+            var ordersEvasi = await db.Histories
+                .Include(h => h.User)
+                .Include(h => h.Menu)
+                .Where(h => !h.Stato) 
+                .ToListAsync();
+
+            return View(ordersEvasi);
         }
 
         protected override void Dispose(bool disposing)
