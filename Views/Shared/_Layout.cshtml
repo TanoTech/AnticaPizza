@@ -35,7 +35,7 @@
                     }
                     @if (Session["UserID"] != null)
                     {
-                        <li>@Html.ActionLink("I tuoi ordini", "", "Amin", new { area = "" }, new { @class = "nav-link" })</li>
+                        <li>@Html.ActionLink("I tuoi ordini", "TuoiOrdini", "User", new { area = "" }, new { @class = "nav-link" })</li>
                     }
                 </ul>
             </div>   
@@ -45,7 +45,7 @@
         @RenderBody()
         <hr />
         <footer>
-            <p>&copy; @DateTime.Now.Year - Applicazione ASP.NET</p>
+            <p>&copy; @DateTime.Now.Year - Antica Pizza</p>
         </footer>
     </div>
 

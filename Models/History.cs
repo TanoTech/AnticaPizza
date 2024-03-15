@@ -14,7 +14,13 @@ namespace AnticaPizza.Models
 
         public int MenuID { get; set; }
 
+        public decimal Prezzo { get; set; }
+
         public int Quantita { get; set; }
+
+        public int NumeroOrdine { get; set; }
+
+        public bool Stato { get; set; }
 
         public DateTime DataOrdine { get; set; }
 

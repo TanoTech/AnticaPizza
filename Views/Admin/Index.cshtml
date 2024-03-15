@@ -1,31 +1,34 @@
-@model List<AnticaPizza.Models.SingleCart>
+@model List<AnticaPizza.Models.History>
 
 <table class="table">
     <tr>
         <th>Utente</th>
-        <th>Menu</th>
-        <th></th>
+        <th>Numero Ordine</th>
+        <th>Ordini</th>
     </tr>
-    @foreach (var userCart in Model)
+    @foreach (var orderGroup in Model.GroupBy(o => o.NumeroOrdine))
     {
-        foreach (var cart in userCart.Carts)
-        {
-            <tr>
-                @if (cart == userCart.Carts.First())
+        var order = orderGroup.First();
+        <tr>
+            <td rowspan="@orderGroup.Count()">@order.User.Username</td>
+            <td rowspan="@orderGroup.Count()">@order.NumeroOrdine</td>
+            <td>
+                @foreach (var item in orderGroup)
                 {
-                    <td rowspan="@userCart.Carts.Count">@userCart.Username</td>
+                    <p>@item.Menu.Nome</p>
                 }
-                <td>@cart.Menu.Nome</td>
-                <td>
-                    @if (cart.Stato)
+            </td>
+        </tr>
+        <tr>
+            <td colspan="3">
+                @if (order.Stato)
+                {
+                    using (Html.BeginForm("SetAllEvasoForUser", "Admin", new { orderNumber = order.NumeroOrdine }, FormMethod.Post))
                     {
-                        using (Html.BeginForm("Evaso", "Admin", new { id = cart.ID }, FormMethod.Post))
-                        {
-                            <button type="submit" class="btn btn-primary">Contrassegna come Evaso</button>
-                        }
+                        <button type="submit" class="btn btn-primary">Evaso</button>
                     }
-                </td>
-            </tr>
-        }
+                }
+            </td>
+        </tr>
     }
 </table>

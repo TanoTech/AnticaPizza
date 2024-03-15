@@ -1,0 +1,28 @@
+@model List<AnticaPizza.Models.Cart>
+
+<table class="table">
+    <tr>
+        <th>Ordine ID</th>
+        <th>Menu</th>
+        <th>Quantità</th>
+        <th>Stato</th>
+    </tr>
+    @foreach (var order in Model)
+    {
+        <tr>
+            <td>@order.ID</td>
+            <td>@order.Menu.Nome</td>
+            <td>@order.Quantita</td>
+            <td>
+                @if (ViewBag.AllOrdersEvasi)
+                {
+                    <td>Evaso</td>
+                }
+                else
+                {
+                  <td> @(order.Stato ? "In lavorazione" : "") </td>
+                }
+            </td>
+        </tr>
+    }
+</table>
