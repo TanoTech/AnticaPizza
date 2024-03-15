@@ -42,5 +42,56 @@ namespace AnticaPizza.Controllers
 
             return RedirectToAction("Index", "Carts");
         }
+
+        public ActionResult Procedi()
+        {
+            int userId = (int)Session["UserID"];
+
+            var cartItems = db.Carts.Where(c => c.UserID == userId).ToList();
+
+            if (cartItems.Any())
+            {
+                decimal totalPrice = cartItems.Sum(c => c.Menu.Prezzo * c.Quantita);
+
+                int orderNumber = GenerateOrderNumber(); 
+
+                foreach (var cartItem in cartItems)
+                {
+                    History orderHistory = new History
+                    {
+                        UserID = cartItem.UserID,
+                        MenuID = cartItem.MenuID,
+                        Prezzo = cartItem.Menu.Prezzo * cartItem.Quantita,
+                        Quantita = cartItem.Quantita,
+                        Stato = true,
+                        NumeroOrdine = orderNumber, 
+                        DataOrdine = DateTime.Now
+                    };
+
+                    db.Histories.Add(orderHistory); 
+                }
+
+                db.Carts.RemoveRange(cartItems);
+                db.SaveChanges();
+
+                return RedirectToAction("Index", "History");
+            }
+
+            return RedirectToAction("Index", "Carts");
+        }
+
+        private int GenerateOrderNumber()
+        {
+            var lastOrder = db.Histories.OrderByDescending(h => h.ID).FirstOrDefault();
+
+            if (lastOrder == null)
+            {
+                return 1;
+            }
+
+            return lastOrder.NumeroOrdine + 1;
+        }
+
     }
+
 }

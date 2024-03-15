@@ -37,5 +37,21 @@ namespace AnticaPizza.Controllers
 
             return View(user);
         }
+
+        public ActionResult TuoiOrdini()
+        {
+            int userId = (int)Session["UserID"];
+
+            var userOrders = db.Carts
+                .Where(c => c.UserID == userId)
+                .ToList();
+
+            bool allOrdersEvasi = userOrders.All(o => !o.Stato);
+
+            ViewBag.AllOrdersEvasi = allOrdersEvasi;
+
+            return View(userOrders);
+        }
+
     }
 }

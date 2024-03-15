@@ -13,21 +13,13 @@ namespace AnticaPizza.Controllers
 
         public async Task<ActionResult> Index()
         {
-
-            var cartsInProgress = await db.Carts
-                .Include(c => c.User)
-                .Include(c => c.Menu)
-                .Where(c => c.Stato)
-                .GroupBy(c => c.UserID)
-                .Select(group => new SingleCart
-                {
-                    UserID = group.Key,
-                    Username = group.FirstOrDefault().User.Username,
-                    Carts = group.ToList()
-                })
+            var ordersInProgress = await db.Histories
+                .Include(h => h.User)
+                .Include(h => h.Menu)
+                .Where(h => h.Stato)
                 .ToListAsync();
 
-            return View(cartsInProgress);
+            return View(ordersInProgress);
         }
 
         [HttpPost]
@@ -38,17 +30,32 @@ namespace AnticaPizza.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
-            var cart = await db.Carts.FindAsync(id);
+            var order = await db.Histories.FindAsync(id);
 
-            if (cart == null)
+            if (order == null)
             {
                 return HttpNotFound();
             }
 
-            cart.Stato = false;
+            order.Stato = false;
 
             await db.SaveChangesAsync();
 
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> SetAllEvasoForUser(int userId)
+        {
+            var userOrders = await db.Histories.Where(h => h.UserID == userId && h.Stato).ToListAsync();
+            if (userOrders != null && userOrders.Any())
+            {
+                foreach (var order in userOrders)
+                {
+                    order.Stato = false;
+                }
+                await db.SaveChangesAsync();
+            }
             return RedirectToAction("Index");
         }
 
