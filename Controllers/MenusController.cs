@@ -44,7 +44,6 @@ namespace AnticaPizza.Controllers
             return fileNames.Select(Path.GetFileName).ToList();
         }
 
-        [Authorize(Roles = RoleModel.Admin)]
         public ActionResult Add()
         {
             return View();
